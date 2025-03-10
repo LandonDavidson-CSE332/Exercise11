@@ -34,6 +34,9 @@ public class Clusterer {
 
         // Run prims to get minimum spanning tree
         prims(0);
+
+        // Run makeKCluster to calculate cost and populate clusters
+        makeKCluster(k);
     }
 
     // implement Prim's algorithm to find a MST of the graph.
