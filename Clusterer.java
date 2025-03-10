@@ -86,7 +86,71 @@ public class Clusterer {
     // to clusters based on which nodes are still connected by
     // the remaining MST edges.
     private void makeKCluster(int k){
-        //TODO
+        // Create an array of each edge to be sorted. 
+        // Purposely add both partner edges so we properly remove pairs
+        ArrayList<WeightedEdge<Integer, Double>> edges = new ArrayList<>(2 * mstAdjList.size());
+        for (List<WeightedEdge<Integer, Double>> node : mstAdjList) {
+            for (WeightedEdge<Integer, Double> edge : node) {
+                edges.add(edge);
+            }
+        }
+        // Sort edges in descending order
+        Collections.sort(edges, Collections.reverseOrder());
+
+        // Remove the most expensive edge until there are no more edges to remove
+        int edges_left = k - 1;
+        for (int i = 0; edges_left != 0; i++) {
+            WeightedEdge<Integer, Double> cur_edge = edges.get(i);
+            // If cur_edge isn't in mst anymore than skip this because we already did it
+            if (!mstAdjList.get(cur_edge.source).contains(cur_edge)) {
+                continue;
+            }
+            // If this is the last edge set its weight as cost
+            edges_left--;
+            if (edges_left == 0) {
+                cost = cur_edge.weight;
+            }
+            // Remove current edge from mstAdjList
+            mstAdjList.get(cur_edge.source).remove(cur_edge);
+            // Remove the matching edge
+            for (WeightedEdge<Integer, Double> mirror_edge : mstAdjList.get(cur_edge.destination)) {
+                if (mirror_edge.destination == cur_edge.source) {
+                    mstAdjList.get(cur_edge.destination).remove(mirror_edge);
+                    break;
+                }
+            }
+        }
+
+        // BFS The fractured mst to find clusters
+        boolean[] known = new boolean[mstAdjList.size()];
+        Arrays.fill(known, false);
+        int cluster = 0;
+        // Attempt a BFS on each node if it isn't known yet
+        for (int i = 0; i < mstAdjList.size(); i++) {
+            if (known[i]) continue;
+            ClusterBreadthFirstSearch(i, known, cluster);
+            cluster++;
+        }
+    }
+
+    // Perform a breadth first search on the given node and add any unknown nodes to the given cluster
+    private void ClusterBreadthFirstSearch(int node, boolean[] known, int cluster) {
+        // Initialize queue for traversal
+        Queue<Integer> queue = new ArrayDeque<>();
+        queue.add(node);
+        // Repeatedly add nodes to given cluster until we traverse the whole forest
+        List<Integer> cur_cluster = clusters.get(cluster);
+        while (!queue.isEmpty()) {
+            int cur_node = queue.remove();
+            if (known[cur_node]) continue;
+            cur_cluster.add(cur_node);
+            known[cur_node] = true;
+            // Add each of cur_node's edge's destinations to queue if not known
+            for (WeightedEdge<Integer, Double> edge : mstAdjList.get(cur_node)) {
+                if (known[edge.destination]) continue;
+                queue.add(edge.destination);
+            }
+        }
     }
 
     public List<List<Integer>> getClusters(){
