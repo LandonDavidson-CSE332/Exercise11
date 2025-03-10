@@ -9,6 +9,9 @@ public class Clusterer {
     public Clusterer(double[][] distances, int k){
         // Initialize minimum spanning stree adjancency list with n items, will be populated by
         mstAdjList = new ArrayList<>(distances.length);
+        for (int i = 0; i < distances.length; i++) {
+            mstAdjList.add(new LinkedList<WeightedEdge<Integer, Double>>());
+        }
 
         // Initialize the clusters list with k items
         clusters = new ArrayList<>(k);
