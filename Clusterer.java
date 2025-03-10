@@ -26,10 +26,14 @@ public class Clusterer {
             adjList.add(new LinkedList<WeightedEdge<Integer, Double>>());
             List<WeightedEdge<Integer, Double>> cur_node = adjList.get(i);
             for (int j = 0; j < distances[i].length; j++) {
-                // Add each edge from current node i to the linked list
+                // Add each edge from current node i, excluding itself, to the linked list
+                if (i == j) continue;
                 cur_node.add(new WeightedEdge<Integer,Double>(i, j, distances[i][j]));
             }
-        }      
+        }
+
+        // Run prims to get minimum spanning tree
+        prims(0);
     }
 
     // implement Prim's algorithm to find a MST of the graph.
