@@ -42,16 +42,12 @@ public class Clusterer {
     // implement Prim's algorithm to find a MST of the graph.
     // in my implementation I used the mstAdjList field to store this.
     private void prims(int start){
-        // Create known array and size value
-        // double[] costs = new double[adjList.size()];
-        // Arrays.fill(costs, Double.MAX_VALUE);
         boolean[] known = new boolean[adjList.size()];
         Arrays.fill(known, false);
         int size = 1;
 
         // Initialize priority queue with start node's edges
         known[start] = true;
-        //costs[start] = 0;
         PriorityQueue<WeightedEdge<Integer, Double>> queue = new PriorityQueue<>();
         for (WeightedEdge<Integer, Double> edge : adjList.get(start)) {
             queue.add(edge);
@@ -77,7 +73,6 @@ public class Clusterer {
                 queue.add(edge);
             }
         }
-        size = 0;
     }
 
 
